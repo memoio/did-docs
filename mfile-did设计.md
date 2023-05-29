@@ -92,7 +92,7 @@ MFILE DID组成如下：
 
 在MFILE DID文档中，read属性只有在type等于private是有效，表示拥有读取私有文件权限的用户列表。当MFILE DID中type为private时，即对应的文件为私有文件时，read属性中所有的MEMO DID均有权读取该私有文件。
 
-**read**：在MFILE DID文档中，read属性是可选的。若read属性存在，则read属性必须是一组字符串且满足[MEMO DID](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md#11-did格式)所描述的构成规则。
+**read**：在MFILE DID文档中，read属性是可选的。若read属性存在，则read属性必须是一组字符串且满足[MEMO DID URL](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md#12-did-url格式)所描述的构成规则。
 
 >**MFILE DID文档例子3**
 >
@@ -115,7 +115,7 @@ MFILE DID组成如下：
 
 **文件DID的实际控制者**
 
-由于文件本身无法控制自己，因此需要指定文件所有者，文件所有者由文件DID的controller字段表示。同一时间，一个文件DID标识符，或者说一个文件，只能有一个用户DID所有。但用户可以在capabilityDelegation中添加验证方法，从而委托其他用户管理和控制文件。因此，一个文件DID标识符，可能会由多个公私钥对控制。
+由于文件本身无法控制自己，因此需要指定文件所有者，文件所有者由文件DID的controller字段表示。同一时间，一个文件DID标识符，或者说一个文件，只能有一个用户DID所有。虽然用户可以在capabilityDelegation中添加验证方法，但是capabilityDelegation中添加验证方法只拥有读取文件的权限，无法完全控制文件。因此，一个文件DID标识符，只会由一对公私钥对控制。
 
 
 
@@ -185,8 +185,10 @@ ResolveRead(did)
 
 - 修改DID所有者**`changeController(mfileDid, controller)`**，该接口仅DID所有者可以调用；
 - 修改文件类型**`changeType(mfileDid, type)`**，该接口仅DID所有者可以调用；
-- 授予读权限**`AddRead(mfileDid, memoDid)`**，该接口所有人均可调用，但需要向DID所有者付费；
-- 撤销读权限**`Dactivate(mfileDid, memoDid)`**，该接口仅DID所有者可以调用；
+- 修改文件价格**`changePrice(mfileDid, price)`**，该接口仅DID所有者可以调用；
+- 付费获取读权限**`AddRead(mfileDid, memoDidUrl)`**，该接口任何人均可调用，但需要向DID所有者付费；
+- 免费授予读权限**`GrantRead(mfileDid, memoDidUrl)`**，该接口仅DID所有者可以调用，无需付费；
+- 撤销读取权限**`DeactivateRead(mfileDid, memoDidUrl)`**，该接口仅DID所有者可以调用，但是仅可删除免费授予的读权限，无法删除付费购买的部分。
 
 
 
@@ -204,15 +206,21 @@ ResolveRead(did)
 
 **授予读权限**
 
-在MFILE DID中，授予他人读权限并非由所有者发起，实际上任何人均可添加读取文件的权限。
+在MFILE DID中，授予他人读权限可以由其他任何人发起但需要支付一定的代币，也可以由所有人发起同时无需支付任何货币。
+
+- 付费购买读权限
 
 所有者仅仅会在创建私有文件（即type属性为private）时，添加文件读取权限的费用。其他人若想获取访问文件的权限，则需要支付给所有者相应的代币，则可将自己添加到read属性中。
+
+- 免费添加读权限
+
+所有者会在创建文件后，选择免费为其他人添加访问文件的权限，该过程完全由所有者发起并完成，他人无需付费。
 
 
 
 ### 1.3.4 删除MFILE DID
 
-删除DID，会将MFILE DID文档标志为已启用状态。
+删除DID，会将MFILE DID文档标志为已弃用状态。
 
 
 
@@ -222,4 +230,4 @@ ResolveRead(did)
 | ----------------------------- | -------- | -------- |
 | read(文件did)                 | &#10004; | &#10006; |
 | controller(文件did)           | &#10004; | &#10004; |
-| capabilityDelegation(用户DID) | &#10004; | &#10004; |
+| capabilityDelegation(用户DID) | &#10004; | &#10006; |
