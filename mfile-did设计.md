@@ -129,8 +129,8 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 >     	"type": "private",
 >     	"controller": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
 >    	"keywords": [
->        	"movie",
->        	"chinese"
+>             "movie",
+>             "chinese"
 >    	 ],
 > }
 > ```
@@ -153,8 +153,8 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 >     	"type": "private",
 >     	"controller": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
 >     	"keywords": [
->        	"movie",
->        	"chinese"
+>             "movie",
+>             "chinese"
 >     	],
 >     	"price": 50,
 > }
