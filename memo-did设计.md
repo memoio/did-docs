@@ -70,7 +70,6 @@ MEMO DID URL组成如下：
 | 属性名               | 是否必要 | 表示方法                                                  | 用处                        |
 | -------------------- | -------- | --------------------------------------------------------- | --------------------------- |
 | id                   | 是       | 一个符合[DID](#1.1 DID格式)构成规则的字符串               | 用户ID                      |
-| controller           | 否       | 一组符合[DID](#1.1 DID格式)构成规则的字符串               | DID文档的控制者             |
 | verificationMethod   | 是       | 一组符合[验证方法](#verificationMethod)构成规则的验证方法 | 一组用于验证的公钥集合      |
 | authentication       | 否       | 一组符合[DID URL](#1.2 DID URL格式)构成规则的字符串       | 以该DID的名义认证登录       |
 | assertionMethod      | 否       | 一组符合[DID URL](#1.2 DID URL格式)构成规则的字符串       | 以该DID的名义发布可验证声明 |
@@ -107,24 +106,6 @@ MEMO DID URL组成如下：
 
 
 
-### 1.3.2 controller属性
-
-在DID文档中，controller表示被授予拥有更改（只包括添加和删除权利，不包括更新字段的权利）DID文档权利的DID实体。在controller表示的DID文档中，只有{controller}#masterKey表示的验证方法被认为是有效的，通过该验证方法验证成功的证明等同于DID主体提供的证明。
-
-**controller**：在DID文档中，controller属性是可选的。如果controller属性存在，则必须是一个或者是一组字符串且满足[1.1DID](#1.1 DID格式)所描述的构成规则。controller相对应的DID文档必须包含masterKey验证方法。
-
-> **DID文档例子2**
->
-> ```json
-> {
-> 	"@context": "https://www.w3.org/ns/did/v1",
-> 	"id": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
-> 	"controller": "did:memo:28c08c6088c472168f0df2190a9c7444ba0b0befafb3244e224ca92793d7227c",
-> }
-> ```
-
-
-
 ### 1.3.3 verificationMethod属性
 
 在DID文档中，verificationMethod属性描述了一组验证证明的方式，通常使用公钥表示。通过公钥可以验证签名是否由对应的私钥签署，从而确定签名者的身份或权限。verificationMethod属性通常用于线下两个DID主体之间的交互，以实现认证或授权功能。
@@ -133,8 +114,8 @@ MEMO DID URL组成如下：
 
 - **id**：在验证方法中，id属性必须给出，另外id属性必须是一个字符串且满足[1.2DID URL](#1.2 DID URL格式)描述的构成规则。
 - **type**：在验证方法中，type属性必须给出，另外type属性必须是一个字符串。type属性对应唯一的hash函数以及签名函数，从而描述了如何使用verificationMehtod中公钥验证签名。
-- **controller**：在验证方法中，controller属性必须给出，另外controller属性必须是一个字符串且满足[1.1DID URL](#1.1 DID URL)描述的构成规则。controller表示被授予拥有更新verificationMethod属性中type属性以及publicKeyHex属性的权利，除此之外的DID controller以及masterKey则无权修改。
-- **publicKeyHex**：在验证方法中，publicKeyHex属性必须给出，另外publicKeyHex属性必须是一个符合16进制编码的字符串，表示验证公钥。
+- **controller**：在验证方法中，controller属性必须给出，另外controller属性必须是一个字符串且满足[1.1DID](#1.1 DID格式)描述的构成规则。controller表示被授予拥有更新verificationMethod属性中type属性以及publicKeyHex属性的权利，而DID的masterKey则无权修改。
+- **publicKeyHex**：在验证方法中，publicKeyHex属性必须给出，另外publicKeyHex属性必须是一个符合16进制编码的字符串，表示验证方案的压缩公钥。
 
 > **DID文档例子3**
 >
@@ -142,8 +123,7 @@ MEMO DID URL组成如下：
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
-> 	"controller": "did:memo:28c08c6088c472168f0df2190a9c7444ba0b0befafb3244e224ca92793d7227c",
->        "verificationMethod": [
+>     "verificationMethod": [
 >        {
 >            "id": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e#masterKey",
 >            "type": "EcdsaSecp256k1VerificationKey2019",
@@ -157,16 +137,16 @@ MEMO DID URL组成如下：
 >            "publicKeyHex": "0x02948b109c8298057c1d798d9a14ed30f33689d8397e2e60f89ef408b08d7f48a1"
 >        }
 >        ],
-> }
+>    }
 > ```
 
 > **特殊验证方法masterKey**
 >
 > 在每个DID文档的verificationMethod属性中，必然存在一个特殊的验证方法，其id为`{did}#masterKey`。在例子4中即为`did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e#masterKey`。该验证方法除了能够在线下验证签名者的身份外，也是线上合约验证签名者是否具有修改DID文档权限的方法，其他验证方法不具备该功能。另外，`masterKey`所对应的验证方法中，controller的`memo-specific-id`以全零表示，这意味着msterKey不受任何具体的DID实体控制，即masterKey是无法修改的。
 
->**DID文档controller和验证方法controller的区别**
+>**验证方法的controller**
 >
->由于密钥无法控制自身，并且无法从DID文档中推断出验证方法的控制器，因此需要在验证方法中明确表达密钥控制器的身份。故DID文档controller拥有对整个文档属性的添加和删除的权限，而验证方法controller仅拥有对单个验证方法中type和publicKeyHex属性进行修改的权限。通常情况下，DID文档controller和验证方法controller均为DID实体本身，但可能这三者均不相同。
+>由于密钥无法控制自身，并且无法从DID文档中推断出验证方法的控制器，因此需要在验证方法中明确表达密钥控制器的身份。验证方法的controller仅拥有对单个验证方法中type和publicKeyHex属性进行修改的权限。通常情况下，验证方法controller均为DID实体本身，但可能这两者均不相同。
 
 
 
@@ -182,8 +162,7 @@ MEMO DID URL组成如下：
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
-> 	"controller": "did:memo:28c08c6088c472168f0df2190a9c7444ba0b0befafb3244e224ca92793d7227c",
->    	...
+> 	...
 >        "authentication": [
 >            "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e#masterKey",
 >            "did:memo:75cc9f6d3c4a68fbe81f7e4926c413c599d2507f408666576401eaf0b36f66fe#key-5"
@@ -205,8 +184,7 @@ MEMO DID URL组成如下：
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
-> 	"controller": "did:memo:28c08c6088c472168f0df2190a9c7444ba0b0befafb3244e224ca92793d7227c",
->    	...
+> 	...
 >        "assertionMethod": [
 >            "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e#key-1",
 >            "did:memo:6b4d7cdef82c4581f7e2b1d8dc11b124410a1b9ac2f8923f6724da86184dc52f#key-3"
@@ -228,8 +206,7 @@ MEMO DID URL组成如下：
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
-> 	"controller": "did:memo:28c08c6088c472168f0df2190a9c7444ba0b0befafb3244e224ca92793d7227c",
->    	...
+> 	...
 >        "capabilityDelegation": [
 >            "did:memo:75cc9f6d3c4a68fbe81f7e4926c413c599d2507f408666576401eaf0b36f66fe#key-1",
 >            "did:memo:6b4d7cdef82c4581f7e2b1d8dc11b124410a1b9ac2f8923f6724da86184dc52f#key-2"
@@ -251,9 +228,8 @@ MEMO DID URL组成如下：
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
-> 	"controller": "did:memo:28c08c6088c472168f0df2190a9c7444ba0b0befafb3244e224ca92793d7227c",
 > 	...
->        "recovery": [
+>     "recovery": [
 >            "did:memo:75cc9f6d3c4a68fbe81f7e4926c413c599d2507f408666576401eaf0b36f66fe#key-1",
 >            "did:memo:6b4d7cdef82c4581f7e2b1d8dc11b124410a1b9ac2f8923f6724da86184dc52f#key-2"
 >        ],
@@ -315,7 +291,7 @@ Resolve(did)
 
 在MEMO DID的合约中，所有的verificationMethod会依次序添加到verificationMethod数组中，因此解析verificationMethod中所有元素，只需遍历verificationMethod数组即可。
 
-其他的属性如：controller，authentication，assertionMehod，capabilityDelegation以及recovery，则会在每次添加操作执行完成后，发出对应的事件，同时合约提供相应的查询接口，用以查询上述属性是否有效。因此，可以通过遍历相应的事件，同时调用查询接口，即可解析MEMO DID所有属性。
+其他的属性如：authentication，assertionMehod，capabilityDelegation以及recovery，则会在每次添加操作执行完成后，发出对应的事件，同时合约提供相应的查询接口，用以查询上述属性是否有效。因此，可以通过遍历相应的事件，同时调用查询接口，即可解析MEMO DID所有属性。
 
 至于@context属性，则会在上述解析完成后，默认添加。
 
@@ -335,19 +311,17 @@ Dereference(didUrl)
 
 对于DID文档的修改，存在如下接口：
 
-- 添加控制者**addController(did, controller)**，该接口仅masterKey以及DID controller可以调用；
-- 删除控制者**deactivateController(did, controller)**，该接口仅masterKey以及DID controller可以调用；
-- 添加验证方法**addVerificationMethod(did, type, controller, publicKeyHex)**，该接口仅masterKey以及DID controller可以调用；
+- 添加验证方法**addVerificationMethod(did, type, controller, publicKeyHex)**，该接口仅masterKey可以调用；
 - 修改验证方法**updateVerificationMethod(methodID, type, publicKeyHex)**，该接口仅<font color="red">`验证方法中controller`</font>可以调用；
-- 撤销验证方法**deactivateVerificationMethod(methodID)**，该接口仅masterKey以及DID controller可以调用；
-- 添加认证方式**addAuthentication(did, methodID)**，该接口仅masterKey以及DID controller可以调用；
-- 撤销认证方式**deactivateAuthentication(did, methodID)**，该接口仅masterKey以及DID controller可以调用；
-- 添加用户声明验证方式**addAssertionMethod(did, methodID)**，该接口仅masterKey以及DID controller可以调用；
-- 撤销用户声明验证方式**deactivateAssertionMethod(did, methodID)**，该接口仅masterKey以及DID controller可以调用；
-- 添加文件代理方**addCapabilityDelegation(did, methodID, expiration)**，该接口仅masterKey以及DID controller可以调用；
-- 撤销文件代理方**deactivateCapabilityDelegation(did, methodID)**，该接口仅masterKey以及DID controller可以调用；
-- 添加密钥恢复**addrecovery(did, methodID)**，该接口仅masterKey以及DID controller可以调用；
-- 撤销密钥恢复**deactivaterecovery(did, methodID)**，该接口仅masterKey以及DID controller可以调用；
+- 撤销验证方法**deactivateVerificationMethod(methodID)**，该接口仅masterKey可以调用；
+- 添加认证方式**addAuthentication(did, methodID)**，该接口仅masterKey可以调用；
+- 撤销认证方式**deactivateAuthentication(did, methodID)**，该接口仅masterKey可以调用；
+- 添加用户声明验证方式**addAssertionMethod(did, methodID)**，该接口仅masterKey可以调用；
+- 撤销用户声明验证方式**deactivateAssertionMethod(did, methodID)**，该接口仅masterKey可以调用；
+- 添加文件代理方**addCapabilityDelegation(did, methodID, expiration)**，该接口仅masterKey可以调用；
+- 撤销文件代理方**deactivateCapabilityDelegation(did, methodID)**，该接口仅masterKey可以调用；
+- 添加密钥恢复**addrecovery(did, methodID)**，该接口仅masterKey可以调用；
+- 撤销密钥恢复**deactivaterecovery(did, methodID)**，该接口仅masterKey可以调用；
 
 
 
@@ -358,7 +332,7 @@ Dereference(didUrl)
 - 用户选择did以及controller(默认和did相同，但是可能存在单个用户拥有多个did，设定主did控制其他did和其验证方法)；
 - 用户生成一对公私钥，根据生成算法指定type;
 - 使用masterKey的私钥签名，并访问合约接口addVerificationMethod(did, type, controller, publicKeyHex)；
-  - 合约验证签名是否由did masterKey或者did Controller所签；
+  - 合约验证签名是否由did masterKey所签；
   - 合约根据递增的number和did生成methodID；
   - 合约根据methodID，type，controller，publicKeyHex生成验证方法；
   - 合约将验证方法添加到did文档的verificationMethod属性中；
@@ -429,7 +403,7 @@ Dereference(didUrl)
 
 - 用户选择methodID，解析出did以及methodIndex;
 - 用户使用did masterKey签名消息，访问合约接口deactivateVerificationMethod(did, methodIndex)；
-  - 合约验证签名是否由did masterKey或者did controller所签；
+  - 合约验证签名是否由did masterKey所签；
   - 合约删除对应的验证方法；
 
 在例子8-3基础上删除`did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e#key-1`后文档如下：
@@ -457,7 +431,7 @@ Dereference(didUrl)
 
 - 用户选择did，methodID，并设置过期时间；
 - 用户使用masterKey签名消息，并访问合约接口addCapabilityDelegation(did, methodID, expiration)；
-  - 合约验证签名是否由did masterKey或者did controller所签；
+  - 合约验证签名是否由did masterKey所签；
   - 合约添加methodID到文档的capabilityDelegation属性中，同时设置到期时间（到期时间对于展示给用户的DID文档来说是透明的，只有读取文档时合约会判断，但不会展示出来）；
 
 在例子8-3基础上添加`did:memo:75cc9f6d3c4a68fbe81f7e4926c413c599d2507f408666576401eaf0b36f66fe#key-1`后文档如下：
