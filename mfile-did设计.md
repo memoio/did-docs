@@ -1,3 +1,5 @@
+
+
 # 1. MFILE DID设计
 
 ## 1.1 DID格式
@@ -10,16 +12,34 @@ MFILE DID组成如下：
 >did:mfile:<mfile-spific-id>
 >```
 
-一个MFILE DID例子如下：
+其中<font color="red">`<mfile-specific-id>`</font>=<font color="red">`[<encoding-method> : ] <file-hash>`</font>
 
->**MFILE DID例子**
+其中<font color="red">`<encoding-method>`</font>表示文件的哈希方法，包括mid哈希方法，cid哈希方法以及md5哈希方式。而<font color="red">`<file-hash>`</font>表示文件的内容通过<font color="red">`<encoding-method>`</font>哈希方式计算出的哈希值。
+
+**NOTE**：<font color="red">`<encoding-method>`</font>可以无需指定，当<font color="red">`<encoding-method>`</font>未指定时，表明当前的哈希方法为默认的mid哈希方法。
+
+>**MFILE DID例子1**
 >
 >```http
->did:mfile:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4
-
-其中其中<font color="red">`<mfile-specific-id>`</font>=<font color="red">`<file-hash>`</font>
-
-mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方式，编码方式在DID文档中encode属性中表明。
+>did:mfile:bafkreih6n5g5w4y6u7uvc4mh7jhjm7gidmkrbbpi7phyiyg54gplvngcpm
+>```
+>
+>**MFILE DID例子2**
+>
+>```http
+>did:mfile:mid:bafkreih6n5g5w4y6u7uvc4mh7jhjm7gidmkrbbpi7phyiyg54gplvngcpm
+>```
+>
+>**MFILE DID例子3**
+>
+>```http
+>did:mfile:cid:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4
+>```
+>
+>**MFILE DID例子4**
+>
+>```http
+>did:mfile:md5:c1ca03ad958a8e1753144263dc41893c
 
 
 
@@ -27,15 +47,14 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 
 **DID文档**
 
-| 属性名     | 是否必要 | 表示方法                                                     | 用处                                 |
-| ---------- | -------- | ------------------------------------------------------------ | ------------------------------------ |
-| id         | 是       | 一个符合[MFILE DID](#1.1 DID格式)构成规则的字符串            | 文件ID                               |
-| encode     | 是       | 一个字符串                                                   | 表示文件ID的编码方式(mid/cid/md5...) |
-| type       | 是       | 一个字符串（private/public）                                 | 表明文件公开还是私有                 |
-| controller | 是       | 一个符合[MEMO DID](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md#11-did格式)构成规则的字符串 | 文件的所有者，指向用户DID            |
-| keywords   | 是       | 一组字符串                                                   | 描述文件的大概信息                   |
-| price      | 否       | 一个数字                                                     | 表明文件读权限价格                   |
-| read       | 否       | 一组符合[MEMO DID](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md#11-did格式)构成规则的字符串 | 读取文件的权限列表                   |
+| 属性名     | 是否必要 | 表示方法                                                     | 用处                      |
+| ---------- | -------- | ------------------------------------------------------------ | ------------------------- |
+| id         | 是       | 一个符合[MFILE DID](#1.1 DID格式)构成规则的字符串            | 文件ID                    |
+| type       | 是       | 一个字符串（private/public）                                 | 表明文件公开还是私有      |
+| controller | 是       | 一个符合[MEMO DID](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md#11-did格式)构成规则的字符串 | 文件的所有者，指向用户DID |
+| keywords   | 是       | 一组字符串                                                   | 描述文件的大概信息        |
+| price      | 否       | 一个数字                                                     | 表明文件读权限价格        |
+| read       | 否       | 一组符合[MEMO DID](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md#11-did格式)构成规则的字符串 | 读取文件的权限列表        |
 
 
 
@@ -56,25 +75,7 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 
 
 
-### 1.2.2 encode属性
-
-在MFILE DID文档中，encode表示id中`<mfile-spific-id>`的编码方式.
-
-**encode**：在DID文档中，encode属性必须给出且必须在DID文档的最顶层。encode属性必须是一个字符串，包括mid，cid以及md5等编码方式。
-
-> **MFILE DID文档例子2**
->
-> ```json
-> {
-> 	"@context": "https://www.w3.org/ns/did/v1",
-> 	"id": "did:mfile:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4",
->    	"encode": "mid",
-> }
-> ```
-
-
-
-### 1.2.3 type属性
+### 1.2.2 type属性
 
 在MFILE DID文档中，type表示文件是可公开读取还是私有的。
 
@@ -86,14 +87,13 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:mfile:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4",
->     	"encode": "mid",
 >     	"type": "private",
-> }
+>    }
 > ```
 
 
 
-### 1.2.4 controller属性
+### 1.2.3 controller属性
 
 在MFILE DID文档中，controller表示MFILE DID的实际所有者以及对应文件的所有者。controller除了能够更新DID文档（添加或者删除某一属性）外，还能够线下读取或者删除对应的文件。controller表示一个MEMO DID，且只有`{controller}#masterKey`的证明被认为是有效的。
 
@@ -105,15 +105,14 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:mfile:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4",
->     	"encode": "mid",
 >     	"type": "private",
 >     	"controller": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
-> }
+>    }
 > ```
 
 
 
-### 1.2.5 keywords属性
+### 1.2.4 keywords属性
 
 在MFILE DID文档中，keywords属性表示对应文件的关键词，用于描述文件的基本信息，便于其他人检索后购买读取权限。
 
@@ -125,19 +124,18 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:mfile:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4",
->    	"encode": "mid",
 >     	"type": "private",
 >     	"controller": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
 >    	"keywords": [
 >             "movie",
 >             "chinese"
 >    	 ],
-> }
+>    }
 > ```
 
 
 
-### 1.2.6 price属性
+### 1.2.5 price属性
 
 在MFILE DID文档中，price只有在type等于private是有效，表示获取读权限需要的价格。当MFILE DID的所有者设置文件为私有文件时，其他用户可以通过付费的方式，获取读取私有文件的权限。
 
@@ -149,7 +147,6 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 > {
 > 	"@context": "https://www.w3.org/ns/did/v1",
 > 	"id": "did:mfile:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4",
->     	"encode": "mid",
 >     	"type": "private",
 >     	"controller": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
 >     	"keywords": [
@@ -157,12 +154,12 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 >             "chinese"
 >     	],
 >     	"price": 50,
-> }
+>    }
 > ```
 
 
 
-### 1.2.7 read属性
+### 1.2.6 read属性
 
 在MFILE DID文档中，read属性只有在type等于private是有效，表示拥有读取私有文件权限的用户列表。当MFILE DID中type为private时，即对应的文件为私有文件时，read属性中所有的MEMO DID均有权读取该私有文件。
 
@@ -174,15 +171,14 @@ mfile-specific-id包含多种编码方式，包括mid，cid以及md5等编码方
 >{
 >	"@context": "https://www.w3.org/ns/did/v1",
 >	"id": "did:mfile:bafybeicla35laadggrakpz37qlkrvfgobb7cxb74kyjn6556zxdu4gq3p4",
->    	"encode": "mid",
 >    	"type": "private",
->        "controller": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
->    	"keywords": [
->             "movie",
+>       "controller": "did:memo:ce5ac89f84530a1cf2cdee5a0643045a8b0a4995b1c765ba289d7859cfb1193e",
+>     	"keywords": [
+>            "movie",
 >             "chinese"
 >        ],
->    	"price": 50,
->	"read": [
+>     	"price": 50,
+>    	"read": [
 >		"did:memo:0x031c9cc1c36d53ff1feae79bbd32854a05b3cb4bbf4032383ed1eac79af9a918e7"
 >	]
 >}
@@ -264,6 +260,8 @@ ResolveRead(did)
 - 修改DID所有者**`changeController(mfileDid, controller)`**，该接口仅DID所有者可以调用；
 - 修改文件类型**`changeType(mfileDid, type)`**，该接口仅DID所有者可以调用；
 - 修改文件价格**`changePrice(mfileDid, price)`**，该接口仅DID所有者可以调用；
+- 添加文件关键词**`AddKeyWords(mfileDid, keywords)`**，该接口仅DID所有者可以调用；
+- 删除文件关键词**`DeactivateKeywords(mfileDid, keywords)`**，该接口仅DID所有者可以调用；
 - 付费获取读权限**`AddRead(mfileDid, memoDid)`**，该接口任何人均可调用，但需要向DID所有者付费；
 - 免费授予读权限**`GrantRead(mfileDid, memoDid)`**，该接口仅DID所有者可以调用，无需付费；
 - 撤销读取权限**`DeactivateRead(mfileDid, memoDid)`**，该接口仅DID所有者可以调用，但是仅可删除免费授予的读权限，无法删除付费购买的部分。

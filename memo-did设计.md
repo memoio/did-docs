@@ -455,3 +455,35 @@ Dereference(didUrl)
 >     ],
 > }
 > ```
+
+```json
+{
+	"@context": "https://www.w3.org/ns/did/v1",
+	"id": "did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96",
+	"verifycationMethod": [{
+		"id": "did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96#masterKey",
+		"controller": "did:memo:0000000000000000000000000000000000000000000000000000000000000000",
+		"type": "EcdsaSecp256k1VerificationKey2019",
+		"publicKeyHex": "0x03d21e6c4843fa3f5d019e551131106e2075925b01da2a83dc177879a512eb608f"
+    },
+    {
+    	"id": "did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96#key-1",
+    	"controller": "did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96",
+    	"type": "EcdsaSecp256k1VerificationKey2019",
+    	"publicKeyHex": "0x02d78b20654eb7a5d58d83b25d090a338eff18f0b5f919777c9d894c2e161b4b52"
+    }],
+    "authentication": [
+    	"did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96#masterKey"
+    ],
+    "assertionMethod": [
+    	"did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96#masterKey"
+    ],
+    "capabilityDelegation": [
+    	"did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96#key-1"
+    ],
+    "recovery": [
+    	"did:memo:d687daa192ffa26373395872191e8502cc41fbfbf27dc07d3da3a35de57c2d96#masterKey"
+    ]
+}
+```
+
