@@ -248,7 +248,7 @@ MEMO DID URL组成如下：
 Registe(did, publicKey)
 ```
 
-在创建DID之前，需要生成did以及publicKey,其流程如下：
+在创建DID之前，需要生成did以及publicKey，其流程如下：
 
 - 生成一对公私钥，并生成地址；
 - 获取链上随机数或者合约中随机数nonce；
