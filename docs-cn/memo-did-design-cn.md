@@ -486,4 +486,3 @@ Dereference(didUrl)
     ]
 }
 ```
-

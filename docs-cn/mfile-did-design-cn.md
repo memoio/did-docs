@@ -1,8 +1,6 @@
+# MFILE DID设计
 
-
-# 1. MFILE DID设计
-
-## 1.1 DID格式
+## DID格式
 
 MFILE DID组成如下：
 
@@ -41,9 +39,7 @@ MFILE DID组成如下：
 >```http
 >did:mfile:md5:c1ca03ad958a8e1753144263dc41893c
 
-
-
-## 1.2 文件DID核心属性
+## 文件DID核心属性
 
 **DID文档**
 
@@ -56,9 +52,7 @@ MFILE DID组成如下：
 | price      | 否       | 一个数字                                                     | 表明文件读权限价格        |
 | read       | 否       | 一组符合[MEMO DID](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md#11-did格式)构成规则的字符串 | 读取文件的权限列表        |
 
-
-
-### 1.2.1 id属性
+### id属性
 
 在MFILE DID文档中，id表示与DID文档对应的DID标识符。
 
@@ -73,9 +67,7 @@ MFILE DID组成如下：
 > }
 > ```
 
-
-
-### 1.2.2 type属性
+### type属性
 
 在MFILE DID文档中，type表示文件是可公开读取还是私有的。
 
@@ -91,9 +83,7 @@ MFILE DID组成如下：
 >    }
 > ```
 
-
-
-### 1.2.3 controller属性
+### controller属性
 
 在MFILE DID文档中，controller表示MFILE DID的实际所有者以及对应文件的所有者。controller除了能够更新DID文档（添加或者删除某一属性）外，还能够线下读取或者删除对应的文件。controller表示一个MEMO DID，且只有`{controller}#masterKey`的证明被认为是有效的。
 
@@ -110,9 +100,7 @@ MFILE DID组成如下：
 >    }
 > ```
 
-
-
-### 1.2.4 keywords属性
+### keywords属性
 
 在MFILE DID文档中，keywords属性表示对应文件的关键词，用于描述文件的基本信息，便于其他人检索后购买读取权限。
 
@@ -133,9 +121,7 @@ MFILE DID组成如下：
 >    }
 > ```
 
-
-
-### 1.2.5 price属性
+### price属性
 
 在MFILE DID文档中，price只有在type等于private是有效，表示获取读权限需要的价格。当MFILE DID的所有者设置文件为私有文件时，其他用户可以通过付费的方式，获取读取私有文件的权限。
 
@@ -157,9 +143,7 @@ MFILE DID组成如下：
 >    }
 > ```
 
-
-
-### 1.2.6 read属性
+### read属性
 
 在MFILE DID文档中，read属性只有在type等于private是有效，表示拥有读取私有文件权限的用户列表。当MFILE DID中type为private时，即对应的文件为私有文件时，read属性中所有的MEMO DID均有权读取该私有文件。
 
@@ -184,17 +168,13 @@ MFILE DID组成如下：
 >}
 >```
 
-
-
 **文件DID的实际控制者**
 
 由于文件本身无法控制自己，因此需要指定文件所有者，文件所有者由文件DID的controller字段表示。同一时间，一个文件DID标识符，或者说一个文件，只能有一个用户DID所有。虽然用户可以在capabilityDelegation中添加验证方法，但是capabilityDelegation中添加验证方法只拥有读取文件的权限，无法完全控制文件。因此，一个文件DID标识符，只会由一对公私钥对控制。
 
+## MFILE DID相关功能设计
 
-
-## 1.3MFILE DID相关功能设计
-
-### 1.3.1 创建MFILE DID
+### 创建MFILE DID
 
 创建MFILE DID的接口如下：
 
@@ -219,9 +199,7 @@ Registe(did, type, controller, price)
 >}
 >```
 
-
-
-### 1.3.2 解析MFILE DID
+### 解析MFILE DID
 
 **（1）解析MFILE DID**
 
@@ -251,9 +229,7 @@ ResolveRead(did)
 
 3）MFILE DID中controller标识的MEMO DID中capabilityDelegation标识的所有MEMO DID；
 
-
-
-### 1.3.3 修改DID文档信息
+### 修改DID文档信息
 
 对于MFILE DID文档的修改，存在如下几种情况：
 
@@ -266,8 +242,6 @@ ResolveRead(did)
 - 免费授予读权限**`GrantRead(mfileDid, memoDid)`**，该接口仅DID所有者可以调用，无需付费；
 - 撤销读取权限**`DeactivateRead(mfileDid, memoDid)`**，该接口仅DID所有者可以调用，但是仅可删除免费授予的读权限，无法删除付费购买的部分。
 
-
-
 我们以一些典型的例子来说明：
 
 **转让DID所有权**
@@ -277,8 +251,6 @@ ResolveRead(did)
 首先会验证调用者的权限，通过mfileDid的controller找到所有者地址，详见[memo did](http://132.232.87.203:8088/did/docs/blob/master/memo-did设计.md)。从而在链上验证调用者是否是mfileDid的所有者。
 
 随后会将controller替换为最新的MFILE DID所有者。
-
-
 
 **授予读权限**
 
@@ -292,15 +264,11 @@ ResolveRead(did)
 
 所有者会在创建文件后，选择免费为其他人添加访问文件的权限，该过程完全由所有者发起并完成，他人无需付费。
 
-
-
-### 1.3.4 删除MFILE DID
+### 删除MFILE DID
 
 删除DID，会将MFILE DID文档标志为已弃用状态。
 
-
-
-## 1.4 文件权限
+## 文件权限
 
 | 字段                          | 读权限   | 完全控制 |
 | ----------------------------- | -------- | -------- |

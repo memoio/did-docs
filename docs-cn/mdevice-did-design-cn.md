@@ -1,5 +1,3 @@
-
-
 # 1. MDevice DID设计
 
 MDevice DID指的是Memolabs为物联网设备（比如智能穿戴、摄像头等）设计的一套去中心化身份（DID，Decentralized Identifier），目的是赋予设备在去中心化网络中的唯一身份，并支持设备进行安全的通信和交易。主要需要考虑到DID的唯一性、可验证性、隐私保护和互操作性。
